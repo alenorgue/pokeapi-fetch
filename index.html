@@ -33,8 +33,47 @@
 </body>
 <script>
     // 1. Cuando cambie el valor del selector, tenemos que detectar que opción hemos escogido. Probad que sois capaces de recuperar el valor seleccionado por el usuario con un console.log
-
+    
     // 2. En función de la opción escogida, 'montaremos' una URL
+    const selectPokemon = document.getElementById('select-pokemon');
+    const imgPoke = document.querySelector('.card-img-top');
+    const namePoke = document.querySelector('.card-title');
+    const shinyBtn = document.querySelector('.btn-success');
+
+    let currentPokemon = null;
+
+       selectPokemon.addEventListener('change', async (event) => {
+        console.log(event.target.value);
+        const pokemonName = event.target.value;
+        const url = ` https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
+        console.log(url);
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            currentPokemon = data;
+
+            namePoke.textContent = pokemonName;
+            imgPoke.src = data.sprites.front_default;
+            imgPoke.dataset.shinyUrl = data.sprites.front_shiny;
+            imgPoke.classList.remove('d-none');
+        } catch (error) {
+            console.error("Error fetching Pokémon data:", error);
+        }
+       });
+
+       shinyBtn.addEventListener('click', () => {  
+
+        if (!currentPokemon) return;
+
+        if (imgPoke.src === currentPokemon.sprites.front_default ){
+            imgPoke.src = currentPokemon.sprites.front_shiny;
+        }
+        else { imgPoke.src = currentPokemon.sprites.front_default}
+
+
+       });
     // https://pokeapi.co/api/v2/pokemon/pikachu
     // https://pokeapi.co/api/v2/pokemon/luxio
 
